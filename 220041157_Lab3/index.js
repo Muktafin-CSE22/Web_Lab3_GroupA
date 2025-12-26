@@ -5,7 +5,7 @@ require('dotenv').config();
 const PORT = process.env.PORT || 3000;
 
 app.get('/check', (req, res) => {
-    res.json({ message: "Hello from the router!" });
+    res.json({ message: "Hello from the Gym Management!" });
 });
 
 //middleware
@@ -34,11 +34,26 @@ app.use('/api/workouts',router);
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MongoDB_URI).then(() => {
     console.log('Connected to MongoDB');
-//     app.listen(PORT, () => {
-//     console.log(`Server is running on http://localhost:${PORT}`);
-// });
+    app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
 }).catch((error) => {
     console.error('Error connecting to MongoDB:', error);
+});
+
+const workoutRoutes = require('./routes/workoutRoutes');
+const userRoutes = require('./routes/userRoutes');
+const trainerRoutes = require('./routes/trainerRoutes');
+
+app.use((err, req, res, next) =>
+{
+    console.error(err.stack);
+    res.status(500).json({ error: "Something went wrong" });
+});
+
+app.use('*', (req, res) => 
+{
+    res.status(404).json({ error: 'Route not found' });
 });
 
 //install node js
